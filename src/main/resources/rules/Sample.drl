@@ -1,0 +1,90 @@
+package com.sample
+ 
+// Da bi klasa mogla da se koristi, mora da se importuje
+import com.sample.Penzioner;
+  
+rule "Pravilo 1"
+    when
+        p : Penzioner( pol == "Zenski" && starosnaGranica == 0)
+    then
+    	p.setStarosnaGranica(63);
+        update( p );
+end
+
+rule "Pravilo 2"
+    when
+        p : Penzioner( pol == "Muski" && starosnaGranica == 0)
+    then
+    	p.setStarosnaGranica(65);
+        update( p );
+end
+
+rule "Pravilo 3"
+    when
+        p : Penzioner( godineStarosti >= starosnaGranica && godineStaza >= 40
+        				&& tipPenzije == null)
+    then
+    	p.setTipPenzije("Puna penzija");
+        update( p );
+end
+
+rule "Pravilo 4"
+    when
+        p : Penzioner( godineStarosti + 5 > starosnaGranica  && godineStaza >= 40
+        				&& tipPenzije == null)
+    then
+    	p.setTipPenzije("Prevremena puna penzija");
+        update( p );
+end
+
+rule "Pravilo 5"
+    when
+        p : Penzioner( godineStarosti + 5 <= starosnaGranica  && godineStaza < 40
+        				&& imaInvaliditet == false && tipPenzije == null)
+    then
+    	p.setTipPenzije("Nema pravo na penziju");
+        update( p );
+end
+
+rule "Pravilo 6"
+    when
+        p : Penzioner( godineStarosti >= starosnaGranica  && godineStaza < 40
+        				&& tipPenzije == null)
+    then
+    	p.setTipPenzije("Starosna penzija");
+        update( p );
+end
+
+rule "Pravilo 7"
+    when
+        p : Penzioner( godineStarosti + 5 <= starosnaGranica  && godineStaza < 40
+        				&& imaInvaliditet == true && tipPenzije == null)
+    then
+    	p.setTipPenzije("Invalidska penzija");
+        update( p );
+end
+
+rule "Pravilo 8"
+    when
+        p : Penzioner( (tipPenzije == "Puna penzija" || tipPenzije == "Prevremena puna penzija") 
+        				&& procenatPenzije == 0)
+    then
+    	p.setProcenatPenzije(70.0);
+        update( p );
+end
+
+rule "Pravilo 9"
+    when
+        p : Penzioner( tipPenzije == "Starosna penzija" && procenatPenzije == 0)
+    then
+    	p.setProcenatPenzije( p.getGodineStaza() * 70.0 / 40.0 );
+        update( p );
+end
+
+rule "Pravilo 10"
+    when
+        p : Penzioner( tipPenzije == "Invalidska penzija" && procenatPenzije == 0)
+    then
+    	p.setProcenatPenzije(50.0);
+        update( p );
+end
