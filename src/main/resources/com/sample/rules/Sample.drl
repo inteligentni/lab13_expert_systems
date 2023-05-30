@@ -1,4 +1,4 @@
-package com.sample
+package com.sample.rules
  
 // Da bi klasa mogla da se koristi, mora da se importuje
 import com.sample.Penzioner;
